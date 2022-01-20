@@ -1,1 +1,1 @@
-web:  gunicorn run:server
+web: sh setup.sh && streamlit run penguins-app.py
