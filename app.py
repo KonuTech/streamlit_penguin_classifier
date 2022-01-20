@@ -80,7 +80,8 @@ for col in encode:
     df = pd.concat([df, dummy], axis=1)
     del df[col]
 
-df = df.sample(10)
+# df = df.sample(1)
+df = df[:1]
 
 st.subheader("User Input features")
 
