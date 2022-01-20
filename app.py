@@ -1,7 +1,12 @@
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+
+HOME_PATH = os.getcwd()
+DATA_PATH = os.path.join(HOME_PATH, 'inputs')
+MODELS_PATH = os.path.join(HOME_PATH, 'models')
 
 st.write("""
 # Penguin Classifier
@@ -14,6 +19,7 @@ st.sidebar.header("Input Features:")
 uploaded_file = st.sidebar.file_uploader("Upload your CSV input file", type=["csv"])
 if uploaded_file is not None:
     input_df = pd.read_csv(uploaded_file)
+    input_df.drop(columns=["species"], inplace=True)
 else:
     def user_input_features():
         """
@@ -64,7 +70,7 @@ else:
     input_df = user_input_features()
 
 
-penguins_raw = pd.read_csv("inputs\\penguins_cleaned.csv")
+penguins_raw = pd.read_csv(os.path.join(DATA_PATH, "penguins_cleaned.csv"))
 penguins = penguins_raw.drop(columns=["species"])
 df = pd.concat([input_df, penguins], axis=0)
 
@@ -74,7 +80,7 @@ for col in encode:
     df = pd.concat([df, dummy], axis=1)
     del df[col]
 
-df = df[:1]
+df = df.sample(10)
 
 st.subheader("User Input features")
 
@@ -84,7 +90,7 @@ else:
     st.write("Awaiting CSV file to be uploaded.")
     st.write(df)
 
-load_clf = pickle.load(open("models\\penguins_clf.pkl", "rb"))
+load_clf = pickle.load(open(os.path.join(MODELS_PATH, "penguins_clf.pkl"), "rb"))
 
 prediction = load_clf.predict(df)
 prediction_proba = load_clf.predict_proba(df)
